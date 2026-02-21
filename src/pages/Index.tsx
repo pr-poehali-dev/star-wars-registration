@@ -34,9 +34,8 @@ interface RegData {
 
 const FACTION_PHOTOS: Record<string, string> = {
   republic: "https://cdn.poehali.dev/projects/b0ae4b5a-b625-4c90-a1bb-96eacac78c2f/files/3236bde9-a70e-4d31-9e0c-468bb1548134.jpg",
-  separatists: "https://cdn.poehali.dev/projects/b0ae4b5a-b625-4c90-a1bb-96eacac78c2f/files/590eab1b-45db-4e4c-a6c3-51d55719e462.jpg",
-  mandalorians: "https://cdn.poehali.dev/projects/b0ae4b5a-b625-4c90-a1bb-96eacac78c2f/files/224783e1-d3c7-4cd1-a9d8-37bf80040f31.jpg",
   jedi: "https://cdn.poehali.dev/projects/b0ae4b5a-b625-4c90-a1bb-96eacac78c2f/files/31fc1373-c82e-4158-ada6-8e309186bfaf.jpg",
+  mandalorians: "https://cdn.poehali.dev/projects/b0ae4b5a-b625-4c90-a1bb-96eacac78c2f/files/224783e1-d3c7-4cd1-a9d8-37bf80040f31.jpg",
 };
 
 const FACTIONS = [
@@ -60,22 +59,22 @@ const FACTIONS = [
     ],
   },
   {
-    id: "separatists",
-    name: "Конфедерация Независимых Систем",
-    color: "#00ff88",
-    emblem: "🟢",
-    description: "Освободители от тирании Республики",
+    id: "jedi",
+    name: "Орден Джедаев",
+    color: "#b8a0ff",
+    emblem: "🟣",
+    description: "Хранители мира, слуги Силы и защитники справедливости",
     ranks: [
-      { id: 1, name: "Боевой дроид B1", code: "B1-0000", xp: 0 },
-      { id: 2, name: "Элитный B1", code: "B1-E000", xp: 500 },
-      { id: 3, name: "Командир дроидов", code: "B1-C100", xp: 1500 },
-      { id: 4, name: "Суперразрушитель", code: "B2-0100", xp: 3000 },
-      { id: 5, name: "Лейтенант дроидов", code: "B2-L200", xp: 6000 },
-      { id: 6, name: "Капитан дроидов", code: "B2-C300", xp: 10000 },
-      { id: 7, name: "Командер ОМ-9", code: "OOM-900", xp: 16000 },
-      { id: 8, name: "Тактический дроид", code: "TX-200", xp: 25000 },
-      { id: 9, name: "СуперТактик", code: "TX-009", xp: 40000 },
-      { id: 10, name: "Генерал КНС", code: "GEN-001", xp: 60000 },
+      { id: 1, name: "Инициат", code: "JI-0001", xp: 0 },
+      { id: 2, name: "Падаван", code: "JP-0100", xp: 500 },
+      { id: 3, name: "Падаван-воин", code: "JP-0200", xp: 1500 },
+      { id: 4, name: "Рыцарь Джедай", code: "JK-1000", xp: 3000 },
+      { id: 5, name: "Рыцарь-страж", code: "JK-2000", xp: 6000 },
+      { id: 6, name: "Рыцарь-консул", code: "JK-3000", xp: 10000 },
+      { id: 7, name: "Мастер Джедай", code: "JM-1000", xp: 16000 },
+      { id: 8, name: "Мастер Совета", code: "JM-2000", xp: 25000 },
+      { id: 9, name: "Великий Мастер", code: "JM-3000", xp: 40000 },
+      { id: 10, name: "Гранд-Мастер", code: "JGM-001", xp: 60000 },
     ],
   },
   {
@@ -588,7 +587,7 @@ function RegisterPage({ onDone }: { onDone: (user: User) => void }) {
                           }}>
                           <div>{f.emblem}</div>
                           <div className="font-mono-tech text-[8px] mt-1 leading-tight">
-                            {f.id === "republic" ? "РЕСПУБЛИКА" : f.id === "separatists" ? "КНС" : "МАНДА."}
+                            {f.id === "republic" ? "РЕСПУБЛИКА" : f.id === "jedi" ? "ДЖЕДАИ" : "МАНДА."}
                           </div>
                         </button>
                       ))}
@@ -687,19 +686,6 @@ function HomePage({ setPage }: { setPage: (p: Page) => void }) {
               </div>
             ))}
           </div>
-        </div>
-        <div className="holo-card p-5">
-          <div className="font-mono-tech text-[10px] text-[#00ff88] tracking-widest mb-3">БЫСТРЫЙ СТАРТ</div>
-          <div className="space-y-2">
-            {["Зарегистрируй аккаунт", "Создай персонажа", "Изучи иерархию рангов", "Найди свою роль в RP"].map((step, i) => (
-              <div key={i} className="flex items-center gap-2 font-rajdhani text-sm text-[#00d4ff] opacity-70">
-                <span className="font-orbitron text-[10px] text-[#00ff88]">0{i + 1}</span>{step}
-              </div>
-            ))}
-          </div>
-          <button className="w-full mt-4 py-2 rounded btn-neon-green font-orbitron text-[10px]" onClick={() => setPage("factions")}>
-            Смотреть фракции
-          </button>
         </div>
       </div>
       <div>
@@ -942,27 +928,84 @@ function FactionsPage() {
   );
 }
 
-function ProfilePage({ currentUser, setPage, onLogout }: { currentUser: User | null; setPage: (p: Page) => void; onLogout: () => void }) {
+function ProfilePage({ currentUser, setPage, onLogout, onUserUpdate }: {
+  currentUser: User | null;
+  setPage: (p: Page) => void;
+  onLogout: () => void;
+  onUserUpdate: (u: User) => void;
+}) {
   const char = currentUser?.character;
   const faction = FACTIONS.find((f) => f.id === char?.faction);
   const color = faction?.color || "#00d4ff";
 
+  const [editing, setEditing] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [editData, setEditData] = useState({
+    charName: char?.name || "",
+    species: char?.species || "",
+    faction: char?.faction || "republic",
+    backstory: char?.backstory || "",
+  });
+
+  const handleSave = () => {
+    if (!currentUser || !char) return;
+    const newFaction = FACTIONS.find((f) => f.id === editData.faction);
+    const updatedChar: Character = {
+      ...char,
+      name: editData.charName || char.name,
+      species: editData.species,
+      faction: editData.faction,
+      backstory: editData.backstory,
+      rank: newFaction ? newFaction.ranks[0].name : char.rank,
+      photo: FACTION_PHOTOS[editData.faction] || FACTION_PHOTOS.republic,
+    };
+    const updatedUser: User = { ...currentUser, character: updatedChar };
+    const users = getUsers();
+    const newUsers = users.map((u) => u.username === currentUser.username ? updatedUser : u);
+    saveUsers(newUsers);
+    setCurrentUser(updatedUser);
+    onUserUpdate(updatedUser);
+    setEditing(false);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2500);
+  };
+
+  const displayFaction = editing ? FACTIONS.find((f) => f.id === editData.faction) : faction;
+  const displayColor = displayFaction?.color || "#00d4ff";
+  const displayPhoto = editing
+    ? (FACTION_PHOTOS[editData.faction] || FACTION_PHOTOS.republic)
+    : (char?.photo || FACTION_PHOTOS[char?.faction || "republic"] || FACTION_PHOTOS.republic);
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
-      <div className="mb-8">
-        <div className="font-mono-tech text-[10px] text-[#00ff88] tracking-widest mb-2">// PERSONAL DATABANK</div>
-        <h1 className="font-orbitron text-2xl font-bold text-[#00d4ff] glow-text-blue">ПРОФИЛЬ АГЕНТА</h1>
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <div className="font-mono-tech text-[10px] text-[#00ff88] tracking-widest mb-2">// PERSONAL DATABANK</div>
+          <h1 className="font-orbitron text-2xl font-bold text-[#00d4ff] glow-text-blue">ПРОФИЛЬ АГЕНТА</h1>
+        </div>
+        {saved && (
+          <div className="font-mono-tech text-[10px] text-[#00ff88] animate-fade-in-up px-3 py-1.5 rounded"
+            style={{ border: "1px solid rgba(0,255,136,0.3)", background: "rgba(0,255,136,0.08)" }}>
+            ✓ ДАННЫЕ СОХРАНЕНЫ
+          </div>
+        )}
       </div>
+
       <div className="grid md:grid-cols-3 gap-4">
-        <div className="holo-card overflow-hidden scanline" style={{ borderColor: `${color}40` }}>
+        {/* Левая колонка — фото + статистика */}
+        <div className="holo-card overflow-hidden scanline" style={{ borderColor: `${displayColor}40` }}>
           {char && (
             <div className="relative h-48">
-              <img src={char.photo || FACTION_PHOTOS[char.faction]} alt={char.name}
-                className="w-full h-full object-cover" style={{ filter: "brightness(0.6) saturate(0.8)" }} />
+              <img src={displayPhoto} alt={char.name}
+                className="w-full h-full object-cover transition-all duration-500" style={{ filter: "brightness(0.6) saturate(0.8)" }} />
               <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, transparent 50%, rgba(2,8,15,0.95) 100%)" }} />
               <div className="absolute bottom-3 left-3">
-                <div className="font-orbitron text-sm font-bold" style={{ color, textShadow: `0 0 8px ${color}` }}>{char.name}</div>
-                <div className="font-mono-tech text-[9px] opacity-60" style={{ color }}>{char.rank}</div>
+                <div className="font-orbitron text-sm font-bold" style={{ color: displayColor, textShadow: `0 0 8px ${displayColor}` }}>
+                  {editing ? (editData.charName || "—") : char.name}
+                </div>
+                <div className="font-mono-tech text-[9px] opacity-60" style={{ color: displayColor }}>
+                  {displayFaction?.ranks[0].name || char.rank}
+                </div>
               </div>
               <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-[#00ff88] animate-pulse" />
             </div>
@@ -971,39 +1014,106 @@ function ProfilePage({ currentUser, setPage, onLogout }: { currentUser: User | n
             <div className="font-mono-tech text-[10px] text-[#00d4ff] tracking-widest mb-3">СТАТИСТИКА</div>
             {[
               { label: "ПОЗЫВНОЙ", value: currentUser?.username || "—" },
-              { label: "ФРАКЦИЯ", value: faction?.name || "—" },
-              { label: "ВИД", value: char?.species || "—" },
+              { label: "ФРАКЦИЯ", value: displayFaction?.name || "—" },
+              { label: "ВИД", value: editing ? (editData.species || "—") : (char?.species || "—") },
               { label: "БОЕВОЙ ОПЫТ", value: `${char?.xp || 0} XP` },
             ].map((s) => (
               <div key={s.label} className="flex justify-between font-mono-tech text-[9px]">
                 <span className="text-[#00d4ff] opacity-40">{s.label}</span>
-                <span style={{ color }}>{s.value}</span>
+                <span style={{ color: displayColor }}>{s.value}</span>
               </div>
             ))}
           </div>
         </div>
 
+        {/* Правая колонка */}
         <div className="md:col-span-2 space-y-4">
-          {char && (
-            <div className="holo-card p-5" style={{ borderColor: `${color}30` }}>
-              <div className="font-mono-tech text-[10px] tracking-widest mb-3" style={{ color }}>ЛИЧНОЕ ДЕЛО</div>
-              <div className="font-rajdhani text-sm leading-relaxed" style={{ color, opacity: 0.75 }}>
-                {char.backstory || "Данные отсутствуют."}
+          {!editing ? (
+            /* Режим просмотра */
+            <>
+              <div className="holo-card p-5" style={{ borderColor: `${color}30` }}>
+                <div className="font-mono-tech text-[10px] tracking-widest mb-3" style={{ color }}>ЛИЧНОЕ ДЕЛО</div>
+                <div className="font-rajdhani text-sm leading-relaxed" style={{ color, opacity: 0.75 }}>
+                  {char?.backstory || "Данные отсутствуют."}
+                </div>
+              </div>
+              <div className="holo-card p-5">
+                <div className="font-mono-tech text-[10px] text-[#00d4ff] tracking-widest mb-4">УПРАВЛЕНИЕ</div>
+                <div className="flex flex-wrap gap-2">
+                  <button className="btn-neon-green px-5 py-2 rounded font-orbitron text-[10px]"
+                    onClick={() => { setEditing(true); setEditData({ charName: char?.name || "", species: char?.species || "", faction: char?.faction || "republic", backstory: char?.backstory || "" }); }}>
+                    РЕДАКТИРОВАТЬ ДОСЬЕ
+                  </button>
+                  <button className="btn-neon-blue px-5 py-2 rounded font-orbitron text-[10px]"
+                    onClick={() => setPage("characters")}>
+                    КАРТОТЕКА
+                  </button>
+                  <button className="px-5 py-2 rounded font-orbitron text-[10px] transition-all duration-200"
+                    style={{ border: "1px solid rgba(255,50,50,0.4)", color: "rgba(255,100,100,0.8)" }}
+                    onClick={onLogout}>
+                    ВЫЙТИ
+                  </button>
+                </div>
+              </div>
+            </>
+          ) : (
+            /* Режим редактирования */
+            <div className="holo-card p-5" style={{ borderColor: "rgba(0,255,136,0.3)" }}>
+              <div className="font-mono-tech text-[10px] text-[#00ff88] tracking-widest mb-5">// РЕДАКТИРОВАНИЕ ДОСЬЕ</div>
+              <div className="space-y-4">
+                <div>
+                  <label className="font-mono-tech text-[9px] text-[#00d4ff] opacity-60 tracking-wider block mb-1">ИМЯ ПЕРСОНАЖА</label>
+                  <input className="w-full px-3 py-2.5 rounded text-sm holo-input"
+                    value={editData.charName} onChange={(e) => setEditData((d) => ({ ...d, charName: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="font-mono-tech text-[9px] text-[#00d4ff] opacity-60 tracking-wider block mb-1">ВИД</label>
+                  <select className="w-full px-3 py-2.5 rounded text-sm holo-input"
+                    value={editData.species} onChange={(e) => setEditData((d) => ({ ...d, species: e.target.value }))}>
+                    <option value="">— Выберите вид —</option>
+                    <option>Клон-человек</option><option>Человек</option><option>Тви'лек</option>
+                    <option>Монгрел</option><option>Забрак</option><option>Кел Дор</option><option>Дроид</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="font-mono-tech text-[9px] text-[#00d4ff] opacity-60 tracking-wider block mb-1">ФРАКЦИЯ</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {FACTIONS.map((f) => (
+                      <button key={f.id} onClick={() => setEditData((d) => ({ ...d, faction: f.id }))}
+                        className="p-2 rounded text-center transition-all duration-200"
+                        style={{
+                          border: `1px solid ${editData.faction === f.id ? f.color : "rgba(0,212,255,0.2)"}`,
+                          background: editData.faction === f.id ? `${f.color}20` : "transparent",
+                          color: editData.faction === f.id ? f.color : "rgba(0,212,255,0.5)",
+                          boxShadow: editData.faction === f.id ? `0 0 10px ${f.color}40` : "none",
+                        }}>
+                        <div>{f.emblem}</div>
+                        <div className="font-mono-tech text-[8px] mt-1">
+                          {f.id === "republic" ? "РЕСПУБЛИКА" : f.id === "jedi" ? "ДЖЕДАИ" : "МАНДА."}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label className="font-mono-tech text-[9px] text-[#00d4ff] opacity-60 tracking-wider block mb-1">ИСТОРИЯ ПЕРСОНАЖА</label>
+                  <textarea className="w-full px-3 py-2.5 rounded text-sm holo-input resize-none" rows={4}
+                    placeholder="Опишите историю вашего персонажа..."
+                    value={editData.backstory} onChange={(e) => setEditData((d) => ({ ...d, backstory: e.target.value }))} />
+                </div>
+                <div className="flex gap-2 pt-1">
+                  <button className="flex-1 py-2.5 rounded btn-neon-green font-orbitron text-[10px]" onClick={handleSave}>
+                    СОХРАНИТЬ
+                  </button>
+                  <button className="flex-1 py-2.5 rounded font-orbitron text-[10px] transition-all duration-200"
+                    style={{ border: "1px solid rgba(0,212,255,0.2)", color: "rgba(0,212,255,0.5)" }}
+                    onClick={() => setEditing(false)}>
+                    ОТМЕНА
+                  </button>
+                </div>
               </div>
             </div>
           )}
-          <div className="holo-card p-5">
-            <div className="font-mono-tech text-[10px] text-[#00d4ff] tracking-widest mb-4">УПРАВЛЕНИЕ</div>
-            <button className="btn-neon-blue px-5 py-2 rounded font-orbitron text-[10px] mr-2 mb-2"
-              onClick={() => setPage("characters")}>
-              КАРТОТЕКА
-            </button>
-            <button className="px-5 py-2 rounded font-orbitron text-[10px] transition-all duration-200"
-              style={{ border: "1px solid rgba(255,50,50,0.4)", color: "rgba(255,100,100,0.8)" }}
-              onClick={onLogout}>
-              ВЫЙТИ ИЗ СИСТЕМЫ
-            </button>
-          </div>
         </div>
       </div>
     </div>
@@ -1030,6 +1140,10 @@ export default function Index() {
     setPage("register");
   };
 
+  const handleUserUpdate = (updated: User) => {
+    setCurrentUserState(updated);
+  };
+
   if (page === "register") {
     return <RegisterPage onDone={handleDone} />;
   }
@@ -1041,7 +1155,7 @@ export default function Index() {
       {page === "rules" && <RulesPage />}
       {page === "characters" && <CharactersPage currentUser={currentUser} />}
       {page === "factions" && <FactionsPage />}
-      {page === "profile" && <ProfilePage currentUser={currentUser} setPage={setPage} onLogout={handleLogout} />}
+      {page === "profile" && <ProfilePage currentUser={currentUser} setPage={setPage} onLogout={handleLogout} onUserUpdate={handleUserUpdate} />}
     </PageWrapper>
   );
 }
