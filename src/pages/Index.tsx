@@ -463,7 +463,7 @@ function RegisterPage({ onDone }: { onDone: (user: User) => void }) {
             <div className="relative w-20 h-20">
               <div className="absolute inset-0 border-2 border-[#00d4ff] rotate-45 opacity-50" />
               <div className="absolute inset-0 border border-[#00ff88] rotate-12 opacity-30" />
-              <div className="absolute inset-0 flex items-center justify-center text-3xl">⭐</div>
+              <div className="absolute inset-0 flex items-center justify-center text-3xl"></div>
             </div>
           </div>
           <h1 className="font-orbitron text-2xl font-bold text-[#00d4ff] glow-text-blue tracking-widest mb-1">NOVA</h1>
